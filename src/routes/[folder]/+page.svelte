@@ -1,8 +1,19 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
+  import type { PageServerData } from "./$types";
 
-  export let data: PageData;
+  export let data: PageServerData;
 </script>
 
-<h1>{data.title}</h1>
-<div>{data.content}</div>
+<main>
+  <div>
+    {data.folderName}
+  </div>
+  <div>
+    <form method="POST" action="?/reload-folder">
+      <button>Reload folder (all edit data will be lost)</button>
+    </form>
+  </div>
+  <div>
+    <button>Save new folder structure</button>
+  </div>
+</main>

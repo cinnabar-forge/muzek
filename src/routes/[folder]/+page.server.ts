@@ -1,15 +1,27 @@
 import db from "$lib/server/database";
 import type { Folder } from "$lib/types";
-import type { PageServerLoad } from "./$types";
+import { error } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
+import { reloadFolder } from "$lib/server/services";
 
 export const load: PageServerLoad = async ({ params }) => {
-  const musicFiles = await db<Folder>("music_files").where(
-    "folder_id",
-    params.folder,
-  );
+  const folderData = await db<Folder>("folders")
+    .where("hash", params.folder)
+    .first();
+
+  if (!folderData) {
+    error(404, {
+      message: "Not found",
+    });
+  }
 
   return {
-    title: params.folder,
-    content: musicFiles.length,
+    folderName: folderData?.path,
   };
 };
+
+export const actions = {
+  "reload-folder": async (event) => {
+    await reloadFolder(event.params.folder);
+  },
+} satisfies Actions;

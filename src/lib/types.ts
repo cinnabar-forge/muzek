@@ -1,16 +1,16 @@
 export interface Folder {
-  id: number;
+  hash: string;
   path: string;
 }
 
 export interface MusicFile {
   original_path: string;
-  folder_id: number;
+  folder: string;
   title: string;
   artist: string;
   album: string;
   year: string;
-  trackNumber: number;
+  track_number: number;
   genre: string;
-  provisionalPath: string;
+  provisional_path: string;
 }

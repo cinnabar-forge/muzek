@@ -4,13 +4,13 @@
  */
 export const up = async (knex) => {
   await knex.schema.createTable("folders", (table) => {
-    table.increments("id").primary();
+    table.string("hash").primary();
     table.string("path").notNullable().unique();
   });
 
   await knex.schema.createTable("music_files", (table) => {
     table.string("original_path").primary().notNullable();
-    table.integer("folder_id").unsigned().notNullable();
+    table.string("folder").notNullable();
     table.string("title");
     table.string("artist");
     table.string("album");
@@ -19,8 +19,8 @@ export const up = async (knex) => {
     table.string("genre");
     table.string("provisional_path");
     table
-      .foreign("folder_id")
-      .references("id")
+      .foreign("folder")
+      .references("hash")
       .inTable("folders")
       .onDelete("CASCADE");
   });

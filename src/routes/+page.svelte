@@ -10,7 +10,7 @@
       <ul>
         {#each data.folders as folder}
           <li>
-            <a href={`${folder.id}`}>{folder.path}</a>
+            <a href={`${folder.hash}`}>{folder.path}</a>
           </li>
         {/each}
       </ul>

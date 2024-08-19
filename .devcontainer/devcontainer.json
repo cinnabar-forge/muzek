@@ -1,0 +1,17 @@
+{
+  "build": {
+    "context": ".",
+    "dockerfile": "./Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+        "svelte.svelte-vscode"
+      ]
+    }
+  },
+  "name": "Node.js 22"
+}

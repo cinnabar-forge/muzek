@@ -1,0 +1,16 @@
+:root {
+  font-family: "Moderustic", sans-serif;
+  --color-theme-background: #101010;
+  --color-theme-text: white;
+  --color-theme-accent: #e3ac34;
+}
+
+html,
+body {
+  background: var(--color-theme-background);
+  color: var(--color-theme-text);
+}
+
+a {
+  color: var(--color-theme-accent);
+}

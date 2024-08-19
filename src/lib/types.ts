@@ -6,11 +6,13 @@ export interface Folder {
 export interface MusicFile {
   original_path: string;
   folder: string;
-  title: string;
-  artist: string;
-  album: string;
-  year: string;
-  track_number: number;
-  genre: string;
+  hash: string;
+  title?: null | string;
+  artist?: null | string;
+  album?: null | string;
+  year?: null | string;
+  track_number?: null | number;
+  genre?: null | string;
   provisional_path: string;
+  resave_file?: boolean;
 }

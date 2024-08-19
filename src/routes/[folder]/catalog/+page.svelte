@@ -8,11 +8,11 @@
   <table>
     <thead>
       <tr>
+        <th>Action</th>
         <th>Title</th>
         <th>Artist</th>
         <th>Album</th>
         <th>Year</th>
-        <th>Genre</th>
         <th>Original path</th>
         <th>Provisional path</th>
       </tr>
@@ -20,11 +20,11 @@
     <tbody>
       {#each data.files as file}
         <tr>
+          <td><a href="/{file.folder}/catalog/{file.hash}">Edit</a></td>
           <td>{file.title ?? "-"}</td>
           <td>{file.artist ?? "-"}</td>
           <td>{file.album ?? "-"}</td>
           <td>{Number(file.year) ?? "-"}</td>
-          <td>{file.genre ?? "-"}</td>
           <td>{file.original_path ?? "-"}</td>
           <td>{file.provisional_path ?? "-"}</td>
         </tr>
@@ -32,24 +32,3 @@
     </tbody>
   </table>
 </main>
-
-<style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    border: 1px solid #3d3d3d;
-    padding: 8px;
-    text-align: left;
-  }
-
-  th {
-    background-color: #202020;
-  }
-
-  tr:nth-child(even) {
-    background-color: #161616;
-  }
-</style>

@@ -16,3 +16,8 @@ export interface MusicFile {
   provisional_path: string;
   resave_file?: boolean;
 }
+
+export interface MusicPlayer {
+  file: null | string;
+  text: null | string;
+}

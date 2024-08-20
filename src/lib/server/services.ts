@@ -4,7 +4,7 @@ import path from "path";
 import { parseFile } from "music-metadata";
 import { createHash } from "crypto";
 import type { Folder, MusicFile } from "$lib/types";
-import { getFileNameFromData } from "$lib/filename";
+import { getFileNameFromData } from "$lib/display-name";
 
 async function getAllFiles(
   dir: string,

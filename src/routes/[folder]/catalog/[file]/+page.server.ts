@@ -2,7 +2,7 @@ import db from "$lib/server/database";
 import type { MusicFile } from "$lib/types";
 import { error } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
-import { getFileNameFromData } from "$lib/filename";
+import { getFileNameFromData } from "$lib/display-name";
 
 export const load: PageServerLoad = async ({ params }) => {
   const musicFileData = await db<MusicFile>("music_files")

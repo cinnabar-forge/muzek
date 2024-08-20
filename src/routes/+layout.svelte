@@ -1,12 +1,15 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { CINNABAR_PROJECT_VERSION } from "$lib/cinnabar";
   import "../app.css";
   import MusicPlayer from "./MusicPlayer.svelte";
 </script>
 
 <nav>
   <ul>
-    <li><a href="/" class={!$page.params.folder ? "logo" : ""}>MUZEK</a></li>
+    <li>
+      <a href="/" class={!$page.params.folder ? "logo" : ""}>MUZEK</a>
+    </li>
     {#if $page.params.folder}
       <li><a href={`/${$page.params.folder}`} class="logo">Manage</a></li>
       <li><a href="{`/${$page.params.folder}`}/catalog">Catalog</a></li>
@@ -16,6 +19,13 @@
   </ul>
 </nav>
 <slot></slot>
+<footer>
+  <p>
+    <a href="https://github.com/cinnabar-forge/muzek">Muzek</a>
+    v{CINNABAR_PROJECT_VERSION} By
+    <a href="https://github.com/cinnabar-forge">Cinnabar Forge</a> in 2024
+  </p>
+</footer>
 
 <style>
   nav {
@@ -61,5 +71,11 @@
 
   .grow-right {
     flex-grow: 1;
+  }
+
+  footer {
+    text-align: center;
+    font-family: "Teko", sans-serif;
+    font-size: 1.2em;
   }
 </style>

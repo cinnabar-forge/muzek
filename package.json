@@ -25,6 +25,7 @@
     "node-id3": "0.2.6"
   },
   "devDependencies": {
+    "@cinnabar-forge/meta": "0.3.1",
     "@sveltejs/adapter-node": "5.2.2",
     "@sveltejs/kit": "2.5.22",
     "@sveltejs/vite-plugin-svelte": "3.1.1",

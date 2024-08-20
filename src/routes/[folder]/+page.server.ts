@@ -2,7 +2,7 @@ import db from "$lib/server/database";
 import type { Folder } from "$lib/types";
 import { error } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
-import { reloadFolder } from "$lib/server/services";
+import { reloadFolder, saveFolder } from "$lib/server/services";
 
 export const load: PageServerLoad = async ({ params }) => {
   const folderData = await db<Folder>("folders")
@@ -23,5 +23,8 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions = {
   "reload-folder": async (event) => {
     await reloadFolder(event.params.folder);
+  },
+  "save-structure": async (event) => {
+    await saveFolder(event.params.folder);
   },
 } satisfies Actions;

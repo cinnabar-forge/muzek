@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
+  import { enhance } from "$app/forms";
   import type { PageServerData } from "./$types";
 
   export let data: PageServerData;
@@ -15,6 +15,8 @@
     </form>
   </div>
   <div>
-    <button>Save new folder structure</button>
+    <form method="POST" action="?/save-structure" use:enhance>
+      <button>Save new folder structure</button>
+    </form>
   </div>
 </main>

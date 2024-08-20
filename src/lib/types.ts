@@ -5,6 +5,7 @@ export interface Folder {
 
 export interface MusicFile {
   original_path: string;
+  extension: string;
   folder: string;
   hash: string;
   title?: null | string;

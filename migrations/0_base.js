@@ -11,6 +11,7 @@ export const up = async (knex) => {
 
   await knex.schema.createTable("music_files", (table) => {
     table.string("original_path").primary().notNullable();
+    table.string("extension").notNullable();
     table.string("folder").notNullable();
     table.string("hash").notNullable();
     table.string("title");

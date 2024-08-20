@@ -3,14 +3,21 @@ export function getFileNameFromData(
   album: null | string,
   trackNumber: null | number,
   title: null | string,
+  extension: string,
+  hash: string,
 ): string {
   const artistDir = artist ? artist : "Unknown Artist";
   const albumDir = album ? album : "Unknown Album";
-  const track =
-    trackNumber != null ? trackNumber.toString().padStart(2, "0") : "00";
-  const trackTitle = title ? title : "Unknown Title";
+  const track = trackNumber != null && trackNumber.toString().padStart(2, "0");
+  const trackTitle = title ? title : hash;
 
-  const provisionalPath = `${artistDir}/${albumDir}/${track} - ${trackTitle}.mp3`;
+  const provisionalPathPart = `/${artistDir}/${albumDir}`;
+
+  const provisionalNamePart = track
+    ? `/${track} - ${trackTitle}.${extension}`
+    : `/${trackTitle}.${extension}`;
+
+  const provisionalPath = provisionalPathPart + provisionalNamePart;
 
   return provisionalPath;
 }

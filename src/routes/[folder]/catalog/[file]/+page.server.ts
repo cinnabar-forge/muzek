@@ -3,6 +3,7 @@ import type { MusicFile } from "$lib/types";
 import { error } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { getFileNameFromData } from "$lib/display-name";
+import { saveableAudioFormats } from "$lib/variables";
 
 export const load: PageServerLoad = async ({ params }) => {
   const musicFileData = await db<MusicFile>("music_files")
@@ -12,6 +13,12 @@ export const load: PageServerLoad = async ({ params }) => {
   if (!musicFileData) {
     error(404, {
       message: "Not found",
+    });
+  }
+
+  if (!saveableAudioFormats.includes(musicFileData.extension)) {
+    error(403, {
+      message: "Forbidden",
     });
   }
 
@@ -30,7 +37,10 @@ export const actions = {
     const genre = data.get("genre")?.toString() || null;
     const year = data.get("year")?.toString() || null;
 
-    // const folderName = ;
+    const musicFileData = await db<MusicFile>("music_files")
+      .where("hash", params.file)
+      .first();
+
     await db<MusicFile>("music_files")
       .update({
         title,
@@ -44,7 +54,10 @@ export const actions = {
           album,
           track_number,
           title,
+          musicFileData?.extension || ".unknown",
+          params.file
         ),
+        resave_file: true,
       })
       .where("hash", params.file);
   },

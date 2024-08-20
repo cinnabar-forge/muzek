@@ -15,9 +15,7 @@ export const load: PageServerLoad = async ({ params }) => {
     });
   }
 
-  return {
-    folderName: folderData?.path,
-  };
+  return folderData;
 };
 
 export const actions = {

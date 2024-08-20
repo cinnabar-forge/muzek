@@ -1,4 +1,5 @@
 import db from "$lib/server/database";
+import { getFolderData } from "$lib/server/services";
 import type { MusicFile } from "$lib/types";
 import type { PageServerLoad } from "./$types";
 
@@ -12,5 +13,6 @@ export const load: PageServerLoad = async ({ params }) => {
 
   return {
     files: musicFilesData,
+    folder: await getFolderData(params.folder),
   };
 };

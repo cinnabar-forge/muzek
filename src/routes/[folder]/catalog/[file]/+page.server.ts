@@ -4,6 +4,7 @@ import { error } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { getFileNameFromData } from "$lib/display-name";
 import { saveableAudioFormats } from "$lib/variables";
+import { getFolderData } from "$lib/server/services";
 
 export const load: PageServerLoad = async ({ params }) => {
   const musicFileData = await db<MusicFile>("music_files")
@@ -24,6 +25,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
   return {
     musicFileData,
+    folder: await getFolderData(params.folder),
   };
 };
 
@@ -55,7 +57,7 @@ export const actions = {
           track_number,
           title,
           musicFileData?.extension || ".unknown",
-          params.file
+          params.file,
         ),
         resave_file: true,
       })

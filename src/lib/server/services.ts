@@ -9,6 +9,13 @@ import type { Folder, MusicFile } from "$lib/types";
 import { getFileNameFromData } from "$lib/display-name";
 import { loadableAudioFormats } from "$lib/variables";
 
+async function getFolderData(folderHash: string) {
+  const folderData = await db<Folder>("folders")
+    .where("hash", folderHash)
+    .first();
+  return folderData;
+}
+
 async function getAllFiles(
   dir: string,
   fileList: string[] = [],
@@ -67,9 +74,7 @@ async function processMusicFiles(folderPath: string, folderHash: string) {
 
 async function reloadFolder(folderHash: string) {
   console.log("Reloading folder", folderHash);
-  const folderData = await db<Folder>("folders")
-    .where("hash", folderHash)
-    .first();
+  const folderData = await getFolderData(folderHash);
 
   if (!folderData) {
     return;
@@ -83,9 +88,8 @@ async function reloadFolder(folderHash: string) {
 
 async function saveFolder(folderHash: string) {
   console.log("Saving folder", folderHash);
-  const folderData = await db<Folder>("folders")
-    .where("hash", folderHash)
-    .first();
+
+  const folderData = await getFolderData(folderHash);
 
   if (!folderData) {
     return;
@@ -141,6 +145,9 @@ async function saveFolder(folderHash: string) {
       const updatedFileContents = await NodeID3.update(metadata, fileContents);
 
       await fs.promises.writeFile(provisionalPath, updatedFileContents);
+      if (!isSameFile) {
+        await fs.promises.rm(originalFile);
+      }
     } else if (!isSameFile) {
       await fs.promises.cp(originalFile, provisionalPath);
       await fs.promises.rm(originalFile);
@@ -151,4 +158,4 @@ async function saveFolder(folderHash: string) {
   await reloadFolder(folderHash);
 }
 
-export { reloadFolder, saveFolder };
+export { getFolderData, reloadFolder, saveFolder };

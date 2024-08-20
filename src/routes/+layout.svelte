@@ -37,7 +37,7 @@
     margin: 0;
     display: flex;
     list-style: none;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
     height: 2em;
   }

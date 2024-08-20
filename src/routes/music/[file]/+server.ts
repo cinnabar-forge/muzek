@@ -17,8 +17,6 @@ export const GET: RequestHandler = async ({ params }) => {
     });
   }
 
-  console.log(musicFileData);
-
   const fullFilePath = path.join(
     musicFileData.path,
     musicFileData.original_path,

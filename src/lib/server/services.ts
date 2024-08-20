@@ -5,12 +5,16 @@ import { parseFile } from "music-metadata";
 import { createHash } from "crypto";
 import type { Folder, MusicFile } from "$lib/types";
 import { getFileNameFromData } from "$lib/display-name";
+import { promisify } from "util";
+
+const promiseFsReaddir = promisify(fs.readdir);
+const promiseFsReadFile = promisify(fs.readFile);
 
 async function getAllFiles(
   dir: string,
   fileList: string[] = [],
 ): Promise<string[]> {
-  const files = fs.readdirSync(dir);
+  const files = await promiseFsReaddir(dir);
   for (const file of files) {
     const filePath = path.join(dir, file);
     if (fs.statSync(filePath).isDirectory()) {
@@ -25,14 +29,16 @@ async function getAllFiles(
 async function processMusicFiles(folderPath: string, folderHash: string) {
   const allFiles = await getAllFiles(folderPath);
   const musicFiles = allFiles.filter(
-    (file) => file.endsWith(".mp3") || file.endsWith(".wav"),
+    (file) =>
+      file.endsWith(".mp3") || file.endsWith(".wav") || file.endsWith(".m4a"),
   );
 
   for (const file of musicFiles) {
     const metadata = await parseFile(file);
     const filePath = file.split(folderPath)[1];
+    const fileContents = await promiseFsReadFile(file);
     const fileHash = createHash("sha256")
-      .update(filePath)
+      .update(fileContents)
       .digest("hex")
       .slice(0, 12);
     await db<MusicFile>("music_files").insert({
@@ -67,8 +73,6 @@ async function reloadFolder(folderHash: string) {
   await db<Folder>("music_files").where("folder", folderHash).delete();
 
   await processMusicFiles(folderData.path, folderHash);
-
-  console.log("reloadFolder", folderData);
 }
 
 export { reloadFolder };

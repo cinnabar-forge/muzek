@@ -47,7 +47,5 @@ export const actions = {
         ),
       })
       .where("hash", params.file);
-
-    console.log("updated", data);
   },
 } satisfies Actions;

@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
   import type { PageServerData } from "./$types";
 
   export let data: PageServerData;
 </script>
 
 <main>
-  <form method="POST" action="?/update-music-file">
+  <form method="POST" action="?/update-music-file" use:enhance>
     <div>
       <label for="title">Title</label>
       <input type="text" id="title" name="title" value={data.musicFileData.title} />

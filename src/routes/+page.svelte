@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -19,7 +20,7 @@
     {/if}
   </div>
   <div>
-    <form method="POST" action="?/load-folder">
+    <form method="POST" action="?/load-folder" use:enhance>
       <div>
         <input name="folder-name" type="text" placeholder="Folder name" />
       </div>

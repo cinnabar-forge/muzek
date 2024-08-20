@@ -7,7 +7,6 @@ const DATABASE_DIR =
   (process.env.DB_PATH && path.resolve(process.env.DB_PATH)) ||
   path.resolve(os.homedir(), ".config", "cinnabar-forge", "muzek");
 
-console.log(DATABASE_DIR);
 fs.mkdirSync(DATABASE_DIR, { recursive: true });
 
 const knexConfig = {

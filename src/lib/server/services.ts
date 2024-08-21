@@ -39,36 +39,51 @@ async function processMusicFiles(folderPath: string, folderHash: string) {
     loadableAudioFormats.some((format) => file.endsWith("." + format)),
   );
 
+  let progress = 0;
   for (const file of musicFiles) {
-    const fileContents = await fs.promises.readFile(file);
-    const metadata = await parseFile(file);
-    const filePath = file.split(folderPath)[1];
-    const fileExtension = filePath.split(".").pop() || ".unknown";
-    const fileHash = createHash("sha256")
-      .update(fileContents)
-      .digest("hex")
-      .slice(0, 12);
-    const provisionalPath = getFileNameFromData(
-      metadata.common.artist,
-      metadata.common.album,
-      metadata.common.track.no,
-      metadata.common.title,
-      fileExtension,
-      fileHash,
+    progress++;
+    console.log(
+      "processing file",
+      progress,
+      "of",
+      musicFiles.length,
+      "[",
+      file,
+      "]",
     );
-    await db<MusicFile>("music_files").insert({
-      original_path: filePath,
-      extension: fileExtension,
-      folder: folderHash,
-      hash: fileHash,
-      title: metadata.common.title,
-      artist: metadata.common.artist,
-      album: metadata.common.album,
-      track_number: metadata.common.track.no,
-      genre: metadata.common.genre ? metadata.common.genre[0] : "",
-      year: metadata.common.year,
-      provisional_path: provisionalPath,
-    });
+    try {
+      const fileContents = await fs.promises.readFile(file);
+      const metadata = await parseFile(file);
+      const filePath = file.split(folderPath)[1];
+      const fileExtension = filePath.split(".").pop() || ".unknown";
+      const fileHash = createHash("sha256")
+        .update(fileContents)
+        .digest("hex")
+        .slice(0, 12);
+      const provisionalPath = getFileNameFromData(
+        metadata.common.artist,
+        metadata.common.album,
+        metadata.common.track.no,
+        metadata.common.title,
+        fileExtension,
+        fileHash,
+      );
+      await db<MusicFile>("music_files").insert({
+        original_path: filePath,
+        extension: fileExtension,
+        folder: folderHash,
+        hash: fileHash,
+        title: metadata.common.title,
+        artist: metadata.common.artist,
+        album: metadata.common.album,
+        track_number: metadata.common.track.no,
+        genre: metadata.common.genre ? metadata.common.genre[0] : "",
+        year: metadata.common.year,
+        provisional_path: provisionalPath,
+      });
+    } catch {
+      console.log("failed to process", file);
+    }
   }
 }
 
@@ -128,29 +143,38 @@ async function saveFolder(folderHash: string) {
         provisionalPath,
       );
     }
-    await fs.promises.mkdir(path.dirname(provisionalPath), { recursive: true });
+    try {
+      await fs.promises.mkdir(path.dirname(provisionalPath), {
+        recursive: true,
+      });
 
-    const fileContents = await fs.promises.readFile(originalFile);
+      const fileContents = await fs.promises.readFile(originalFile);
 
-    if (musicFileData.resave_file) {
-      const metadata = {
-        title: musicFileData.title || undefined,
-        artist: musicFileData.artist || undefined,
-        album: musicFileData.album || undefined,
-        trackNumber: musicFileData.track_number?.toString() || undefined,
-        genre: musicFileData.genre || undefined,
-        year: musicFileData.year || undefined,
-      };
+      if (musicFileData.resave_file) {
+        const metadata = {
+          title: musicFileData.title || undefined,
+          artist: musicFileData.artist || undefined,
+          album: musicFileData.album || undefined,
+          trackNumber: musicFileData.track_number?.toString() || undefined,
+          genre: musicFileData.genre || undefined,
+          year: musicFileData.year || undefined,
+        };
 
-      const updatedFileContents = await NodeID3.update(metadata, fileContents);
+        const updatedFileContents = await NodeID3.update(
+          metadata,
+          fileContents,
+        );
 
-      await fs.promises.writeFile(provisionalPath, updatedFileContents);
-      if (!isSameFile) {
+        await fs.promises.writeFile(provisionalPath, updatedFileContents);
+        if (!isSameFile) {
+          await fs.promises.rm(originalFile);
+        }
+      } else if (!isSameFile) {
+        await fs.promises.cp(originalFile, provisionalPath);
         await fs.promises.rm(originalFile);
       }
-    } else if (!isSameFile) {
-      await fs.promises.cp(originalFile, provisionalPath);
-      await fs.promises.rm(originalFile);
+    } catch {
+      console.log("failed to change", originalFile);
     }
   }
   console.log("Folder saved:", folderHash);

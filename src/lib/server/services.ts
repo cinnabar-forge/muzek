@@ -39,6 +39,8 @@ async function processMusicFiles(folderPath: string, folderHash: string) {
     loadableAudioFormats.some((format) => file.endsWith("." + format)),
   );
 
+  const repeatHashes: Record<string, true> = {};
+
   let progress = 0;
   for (const file of musicFiles) {
     progress++;
@@ -60,6 +62,13 @@ async function processMusicFiles(folderPath: string, folderHash: string) {
         .update(fileContents)
         .digest("hex")
         .slice(0, 12);
+      if (repeatHashes[fileHash]) {
+        await fs.promises.rm(file);
+        console.log("deleted duplicated path", file);
+        continue;
+      } else {
+        repeatHashes[fileHash] = true;
+      }
       const provisionalPath = getFileNameFromData(
         metadata.common.artist,
         metadata.common.album,
@@ -104,6 +113,8 @@ async function reloadFolder(folderHash: string) {
 async function saveFolder(folderHash: string) {
   console.log("Saving folder", folderHash);
 
+  const repeatPaths: Record<string, true> = {};
+
   const folderData = await getFolderData(folderHash);
 
   if (!folderData) {
@@ -130,6 +141,11 @@ async function saveFolder(folderHash: string) {
     const isEditing = musicFileData.resave_file || !isSameFile;
 
     if (!isEditing) {
+      continue;
+    }
+
+    if (repeatPaths[provisionalPath]) {
+      console.log("skipping", originalFile, "(duplicated path)");
       continue;
     }
 
@@ -166,11 +182,13 @@ async function saveFolder(folderHash: string) {
         );
 
         await fs.promises.writeFile(provisionalPath, updatedFileContents);
+        repeatPaths[provisionalPath] = true;
         if (!isSameFile) {
           await fs.promises.rm(originalFile);
         }
       } else if (!isSameFile) {
         await fs.promises.cp(originalFile, provisionalPath);
+        repeatPaths[provisionalPath] = true;
         await fs.promises.rm(originalFile);
       }
     } catch {
